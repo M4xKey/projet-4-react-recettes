@@ -1,16 +1,62 @@
-# React + Vite
+# Projet 4 - React Recettes
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Une application web de gestion de recettes de cuisine : consultation publique des recettes, authentification par compte, et ajout/suppression de recettes réservé aux utilisateurs connectés.
 
-Currently, two official plugins are available:
+## Démo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Application en ligne** : https://projet-4-react-recettes.vercel.app
+- **API associée** : https://github.com/M4xKey/projet-3-api-recettes
 
-## React Compiler
+## Stack technique
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend** : React 19 + Vite
+- **Backend** : Node.js / Express (dépôt séparé, voir lien ci-dessus)
+- **Base de données** : SQLite
+- **Authentification** : JWT (JSON Web Token)
+- **Lint** : Oxlint
 
-## Expanding the Oxlint configuration
+## Installation locale
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### Prérequis
+
+- Node.js
+- L'API backend démarrée localement (voir [projet-3-api-recettes](https://github.com/M4xKey/projet-3-api-recettes))
+
+### Étapes
+
+```bash
+# 1. Cloner le dépôt
+git clone https://github.com/M4xKey/projet-4-react-recettes.git
+cd projet-4-react-recettes
+
+# 2. Installer les dépendances
+npm install
+
+# 3. Configurer les variables d'environnement
+cp .env.example .env
+```
+
+Variables d'environnement (`.env`) :
+
+| Variable | Description | Exemple |
+|---|---|---|
+| `VITE_API_URL` | URL de l'API backend | `http://localhost:3000` |
+
+```bash
+# 4. Lancer le serveur de développement
+npm run dev
+```
+
+L'application est alors accessible sur `http://localhost:5173` (par défaut).
+
+### Autres commandes
+
+```bash
+npm run build    # build de production
+npm run preview  # prévisualiser le build de production
+npm run lint      # linter le code avec Oxlint
+```
+
+## Note
+
+Ce projet a été réalisé dans le cadre d'un apprentissage du développement web, en utilisant **Claude Code** comme assistant de code.
