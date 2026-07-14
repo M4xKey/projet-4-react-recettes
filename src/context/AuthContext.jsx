@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext(null)
-const AUTH_URL = 'http://localhost:3000/auth'
+const AUTH_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth`
 const STORAGE_KEY = 'token'
 
 function decoderPayload(token) {

@@ -5,7 +5,7 @@ import AuthForm from './components/AuthForm'
 import { useAuth } from './context/AuthContext'
 import './App.css'
 
-const API_URL = 'http://localhost:3000/recettes'
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/recettes`
 
 function App() {
   const { token, user, logout } = useAuth()
