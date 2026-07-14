@@ -1,0 +1,15 @@
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: left;
+}
+
+form div {
+  margin-bottom: 12px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 4px;
+}
