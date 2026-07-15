@@ -1,11 +1,17 @@
 import { useState } from 'react'
+import type { FormEvent } from 'react'
+import type { NouvelleRecette } from '../types'
 
-function RecetteForm({ onAdd }) {
+interface RecetteFormProps {
+  onAdd: (recette: NouvelleRecette) => void
+}
+
+function RecetteForm({ onAdd }: RecetteFormProps) {
   const [titre, setTitre] = useState('')
   const [ingredients, setIngredients] = useState('')
   const [tempsPreparation, setTempsPreparation] = useState('')
 
-  function handleSubmit(event) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     onAdd({

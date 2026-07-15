@@ -1,14 +1,15 @@
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 function AuthForm() {
   const { login, register } = useAuth()
-  const [mode, setMode] = useState('login')
+  const [mode, setMode] = useState<'login' | 'register'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [erreur, setErreur] = useState(null)
+  const [erreur, setErreur] = useState<string | null>(null)
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setErreur(null)
 
@@ -21,7 +22,7 @@ function AuthForm() {
       setEmail('')
       setPassword('')
     } catch (err) {
-      setErreur(err.message)
+      setErreur(err instanceof Error ? err.message : "Une erreur est survenue")
     }
   }
 

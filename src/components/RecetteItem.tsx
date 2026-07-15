@@ -1,4 +1,12 @@
-function RecetteItem({ recette, onDelete, peutSupprimer }) {
+import type { Recette } from '../types'
+
+interface RecetteItemProps {
+  recette: Recette
+  onDelete: (id: number) => void
+  peutSupprimer: boolean
+}
+
+function RecetteItem({ recette, onDelete, peutSupprimer }: RecetteItemProps) {
   return (
     <li>
       <h3>{recette.titre}</h3>

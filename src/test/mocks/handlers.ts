@@ -1,9 +1,10 @@
 import { http, HttpResponse } from 'msw'
+import type { NouvelleRecette, Recette } from '../../types'
 import { creerFauxToken } from './token'
 
 const API_URL = 'http://localhost:3000'
 
-export const recettesDeTest = [
+export const recettesDeTest: Recette[] = [
   {
     id: 1,
     titre: 'Tarte aux pommes',
@@ -26,7 +27,7 @@ export const handlers = [
   }),
 
   http.post(`${API_URL}/auth/login`, async ({ request }) => {
-    const { email, password } = await request.json()
+    const { email, password } = (await request.json()) as { email: string; password: string }
 
     if (password !== 'bonmotdepasse') {
       return HttpResponse.json({ message: 'Email ou mot de passe incorrect' }, { status: 401 })
@@ -38,7 +39,7 @@ export const handlers = [
   }),
 
   http.post(`${API_URL}/auth/register`, async ({ request }) => {
-    const { email } = await request.json()
+    const { email } = (await request.json()) as { email: string }
 
     return HttpResponse.json({
       token: creerFauxToken({ id: 1, email }),
@@ -46,7 +47,7 @@ export const handlers = [
   }),
 
   http.post(`${API_URL}/recettes`, async ({ request }) => {
-    const nouvelleRecette = await request.json()
+    const nouvelleRecette = (await request.json()) as NouvelleRecette
     return HttpResponse.json({ id: 3, user_id: 1, ...nouvelleRecette })
   }),
 

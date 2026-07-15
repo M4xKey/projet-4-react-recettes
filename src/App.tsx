@@ -3,14 +3,15 @@ import RecetteList from './components/RecetteList'
 import RecetteForm from './components/RecetteForm'
 import AuthForm from './components/AuthForm'
 import { useAuth } from './context/AuthContext'
+import type { NouvelleRecette, Recette } from './types'
 import './App.css'
 
 const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/recettes`
 
 function App() {
   const { token, user, logout } = useAuth()
-  const [recettes, setRecettes] = useState([])
-  const [erreur, setErreur] = useState(null)
+  const [recettes, setRecettes] = useState<Recette[]>([])
+  const [erreur, setErreur] = useState<string | null>(null)
 
   useEffect(() => {
     fetch(API_URL)
@@ -19,7 +20,7 @@ function App() {
       .catch(() => setErreur("Impossible de charger les recettes. L'API est-elle démarrée ?"))
   }, [])
 
-  function handleAdd(nouvelleRecette) {
+  function handleAdd(nouvelleRecette: NouvelleRecette) {
     fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -35,11 +36,11 @@ function App() {
         }
         return res.json()
       })
-      .then((recetteCreee) => setRecettes((prev) => [...prev, recetteCreee]))
-      .catch((err) => setErreur(err.message || "Impossible d'ajouter la recette."))
+      .then((recetteCreee: Recette) => setRecettes((prev) => [...prev, recetteCreee]))
+      .catch((err: Error) => setErreur(err.message || "Impossible d'ajouter la recette."))
   }
 
-  function handleDelete(id) {
+  function handleDelete(id: number) {
     fetch(`${API_URL}/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
@@ -54,7 +55,7 @@ function App() {
         }
         setRecettes((prev) => prev.filter((r) => r.id !== id))
       })
-      .catch((err) => setErreur(err.message))
+      .catch((err: Error) => setErreur(err.message))
   }
 
   return (

@@ -1,6 +1,13 @@
+import type { Recette } from '../types'
 import RecetteItem from './RecetteItem'
 
-function RecetteList({ recettes, onDelete, currentUserId }) {
+interface RecetteListProps {
+  recettes: Recette[]
+  onDelete: (id: number) => void
+  currentUserId: number | undefined
+}
+
+function RecetteList({ recettes, onDelete, currentUserId }: RecetteListProps) {
   if (recettes.length === 0) {
     return <p>Aucune recette pour le moment.</p>
   }
