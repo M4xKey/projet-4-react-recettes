@@ -1,15 +1,24 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { describe, expect, it } from 'vitest'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
 import { recettesDeTest } from './test/mocks/handlers'
 
 function afficherApp() {
+  // Un QueryClient neuf par rendu, avec retry désactivé : sinon un test qui
+  // vérifie un cas d'erreur attendrait les tentatives de retry avant d'échouer.
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+
   return render(
-    <AuthProvider>
-      <App />
-    </AuthProvider>,
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </QueryClientProvider>,
   )
 }
 

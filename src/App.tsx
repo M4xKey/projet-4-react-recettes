@@ -1,62 +1,56 @@
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import RecetteList from './components/RecetteList'
 import RecetteForm from './components/RecetteForm'
 import AuthForm from './components/AuthForm'
 import { useAuth } from './context/AuthContext'
-import type { NouvelleRecette, Recette } from './types'
+import { creerRecette, fetchRecettes, SessionExpireeError, supprimerRecette } from './api/recettes'
+import type { NouvelleRecette } from './types'
 import './App.css'
-
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/recettes`
 
 function App() {
   const { token, user, logout } = useAuth()
-  const [recettes, setRecettes] = useState<Recette[]>([])
-  const [erreur, setErreur] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then(setRecettes)
-      .catch(() => setErreur("Impossible de charger les recettes. L'API est-elle démarrée ?"))
-  }, [])
+  // queryKey ['recettes'] identifie ce cache : toute mutation qui doit rafraîchir
+  // la liste invalide cette même clé pour déclencher un refetch.
+  const {
+    data: recettes = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['recettes'],
+    queryFn: fetchRecettes,
+  })
 
-  function handleAdd(nouvelleRecette: NouvelleRecette) {
-    fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(nouvelleRecette),
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          logout()
-          throw new Error('Session expirée, reconnecte-toi.')
-        }
-        return res.json()
-      })
-      .then((recetteCreee: Recette) => setRecettes((prev) => [...prev, recetteCreee]))
-      .catch((err: Error) => setErreur(err.message || "Impossible d'ajouter la recette."))
+  function gererErreurSession(err: Error) {
+    if (err instanceof SessionExpireeError) {
+      logout()
+    }
   }
 
-  function handleDelete(id: number) {
-    fetch(`${API_URL}/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          logout()
-          throw new Error('Session expirée, reconnecte-toi.')
-        }
-        if (!res.ok) {
-          throw new Error('Impossible de supprimer la recette.')
-        }
-        setRecettes((prev) => prev.filter((r) => r.id !== id))
-      })
-      .catch((err: Error) => setErreur(err.message))
-  }
+  const ajouterRecette = useMutation({
+    mutationFn: (nouvelleRecette: NouvelleRecette) => creerRecette(nouvelleRecette, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recettes'] })
+      // Efface une éventuelle erreur laissée par l'autre mutation : sans ça,
+      // un ancien message d'erreur de suppression resterait affiché après un ajout réussi.
+      supprimerRecetteMutation.reset()
+    },
+    onError: gererErreurSession,
+  })
+
+  const supprimerRecetteMutation = useMutation({
+    mutationFn: (id: number) => supprimerRecette(id, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recettes'] })
+      ajouterRecette.reset()
+    },
+    onError: gererErreurSession,
+  })
+
+  const erreur = isError
+    ? "Impossible de charger les recettes. L'API est-elle démarrée ?"
+    : ajouterRecette.error?.message ?? supprimerRecetteMutation.error?.message
 
   return (
     <main>
@@ -74,8 +68,17 @@ function App() {
         <AuthForm />
       )}
 
-      {user && <RecetteForm onAdd={handleAdd} />}
-      <RecetteList recettes={recettes} onDelete={handleDelete} currentUserId={user?.id} />
+      {user && <RecetteForm onAdd={(recette) => ajouterRecette.mutate(recette)} />}
+
+      {isLoading ? (
+        <p>Chargement des recettes…</p>
+      ) : (
+        <RecetteList
+          recettes={recettes}
+          onDelete={(id) => supprimerRecetteMutation.mutate(id)}
+          currentUserId={user?.id}
+        />
+      )}
     </main>
   )
 }
