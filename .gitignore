@@ -27,3 +27,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Config locale Claude Code (autorisations de session, propre à cette machine)
+.claude/
