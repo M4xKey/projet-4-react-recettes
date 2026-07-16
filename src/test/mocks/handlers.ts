@@ -10,14 +10,14 @@ export const recettesDeTest: Recette[] = [
     titre: 'Tarte aux pommes',
     tempsPreparation: 45,
     ingredients: ['pommes', 'pâte brisée', 'sucre'],
-    user_id: 1,
+    userId: 1,
   },
   {
     id: 2,
     titre: 'Salade César',
     tempsPreparation: 15,
     ingredients: ['salade', 'poulet', 'parmesan'],
-    user_id: 2,
+    userId: 2,
   },
 ]
 
@@ -48,7 +48,7 @@ export const handlers = [
 
   http.post(`${API_URL}/recettes`, async ({ request }) => {
     const nouvelleRecette = (await request.json()) as NouvelleRecette
-    return HttpResponse.json({ id: 3, user_id: 1, ...nouvelleRecette })
+    return HttpResponse.json({ id: 3, userId: 1, ...nouvelleRecette })
   }),
 
   http.delete(`${API_URL}/recettes/:id`, () => {

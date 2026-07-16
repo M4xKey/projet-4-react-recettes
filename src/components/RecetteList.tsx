@@ -40,7 +40,7 @@ function RecetteList({ recettes, onDelete, currentUserId }: RecetteListProps) {
               key={recette.id}
               recette={recette}
               onDelete={onDelete}
-              peutSupprimer={currentUserId != null && recette.user_id === currentUserId}
+              peutSupprimer={currentUserId != null && recette.userId === currentUserId}
             />
           ))}
         </ul>
